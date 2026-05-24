@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Agent Skills 使用指南</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f1117;--card:#1a1d27;--card-hover:#22263a;--sidebar:#13151d;--accent:#6c5ce7;--accent2:#00cec9;--text:#e2e8f0;--text-dim:#8892b0;--border:#2d3148;--search-bg:#1e2130}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+.sidebar{width:280px;background:var(--sidebar);border-right:1px solid var(--border);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100;transition:transform .3s}
+.sidebar-header{padding:24px 20px 16px;border-bottom:1px solid var(--border)}
+.sidebar-header h2{font-size:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700}
+.sidebar-header .stats{color:var(--text-dim);font-size:13px;margin-top:6px}
+.cat-list{padding:12px 0}
+.cat-item{display:flex;align-items:center;padding:8px 20px;cursor:pointer;transition:all .2s;color:var(--text-dim);font-size:14px;border-left:3px solid transparent}
+.cat-item:hover,.cat-item.active{background:rgba(108,92,231,.1);color:var(--text);border-left-color:var(--accent)}
+.cat-item .cat-name{flex:1}
+.cat-item .cat-count{background:var(--border);color:var(--text-dim);font-size:11px;padding:2px 8px;border-radius:10px}
+.cat-item.active .cat-count{background:var(--accent);color:#fff}
+.main{flex:1;margin-left:280px;padding:0}
+.top-bar{position:sticky;top:0;background:rgba(15,17,23,.95);backdrop-filter:blur(10px);padding:20px 32px;z-index:50;border-bottom:1px solid var(--border)}
+.top-bar h1{font-size:28px;margin-bottom:4px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.top-bar .subtitle{color:var(--text-dim);font-size:14px}
+.search-box{margin-top:16px;position:relative}
+.search-box input{width:100%;padding:12px 16px 12px 44px;background:var(--search-bg);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:15px;outline:none;transition:border-color .2s}
+.search-box input:focus{border-color:var(--accent)}
+.search-box .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px}
+.search-count{color:var(--text-dim);font-size:13px;margin-top:8px;padding:0 32px}
+.content{padding:8px 32px 60px}
+.cat-section{margin-top:32px}
+.cat-section-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.cat-section-header h2{font-size:20px;color:var(--text)}
+.cat-badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px}
+.skill-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.skill-card:hover{background:var(--card-hover);border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(108,92,231,.15)}
+.skill-card .skill-name{font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.skill-card .skill-name .icon{font-size:20px}
+.skill-card .skill-cat{display:inline-block;font-size:11px;padding:2px 10px;border-radius:12px;margin-bottom:10px;font-weight:500}
+.skill-card .skill-desc{color:var(--text-dim);font-size:13.5px;line-height:1.6;margin-bottom:12px}
+.skill-card .expand-hint{font-size:11px;color:var(--text-dim);opacity:.5;transition:opacity .2s}
+.skill-card:hover .expand-hint{opacity:1}
+.skill-card .how-to-use{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.skill-card.expanded .how-to-use{display:block}
+.how-to-use code{background:rgba(108,92,231,.2);color:var(--accent);padding:2px 8px;border-radius:4px;font-size:13px}
+.how-to-use p{color:var(--text-dim);font-size:13px;line-height:1.6;margin-top:6px}
+.tutorial{background:linear-gradient(135deg,rgba(108,92,231,.1),rgba(0,206,201,.1));border:1px solid var(--border);border-radius:16px;padding:24px;margin:24px 32px}
+.tutorial h3{color:var(--accent2);margin-bottom:12px;font-size:18px}
+.tutorial p{color:var(--text-dim);font-size:14px;line-height:1.6}
+.tutorial .methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:12px}
+.tutorial .method{background:rgba(0,0,0,.2);padding:14px;border-radius:10px}
+.tutorial .method h4{color:var(--accent);font-size:14px;margin-bottom:6px}
+.tutorial .method p{color:var(--text-dim);font-size:13px}
+.tutorial .method code{background:rgba(108,92,231,.2);color:var(--accent);padding:2px 6px;border-radius:3px;font-size:12px}
+.menu-btn{display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--accent);border:none;color:#fff;width:40px;height:40px;border-radius:10px;font-size:20px;cursor:pointer}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .menu-btn{display:block}
+  .top-bar{padding:60px 20px 20px}
+  .content{padding:8px 20px 60px}
+  .skills-grid{grid-template-columns:1fr}
+  .tutorial{margin:24px 20px}
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.skill-card{animation:fadeIn .3s ease forwards}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+</style>
+</head>
+<body>
+<button class="menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">&#9776;</button>
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>&#9889; Hermes Skills</h2>
+    <div class="stats" id="stats">加载中...</div>
+  </div>
+  <div class="cat-list" id="catList"></div>
+</aside>
+<main class="main">
+  <div class="top-bar">
+    <h1>&#128214; Hermes Agent Skills 使用指南</h1>
+    <p class="subtitle">涵盖全部 265 个技能的一对一使用指南 · 分类浏览 · 快速搜索</p>
+    <div class="search-box">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" id="searchInput" placeholder="搜索技能名称、描述、分类..." autocomplete="off">
+    </div>
+  </div>
+  <div class="tutorial">
+    <h3>&#128218; 如何使用 Skills 技能？</h3>
+    <p>Hermes Agent 的 Skills 是可复用的专业能力模块。每个 skill 封装了特定领域的操作流程、API 调用和最佳实践。</p>
+    <div class="methods">
+      <div class="method"><h4>&#128172; 方法一：自然语言</h4><p>直接告诉 Hermes 你想做什么，系统会自动匹配最合适的技能。例如：<br><code>帮我搜索 GitHub 上的热门仓库</code></p></div>
+      <div class="method"><h4>&#128203; 方法二：指定加载</h4><p>明确告诉 Hermes 加载某个技能：<br><code>加载 github-repo-management 技能</code></p></div>
+      <div class="method"><h4>&#9000; 方法三：CLI 命令</h4><p>在 CLI 模式下直接调用：<br><code>skill_view('skill-name')</code></p></div>
+      <div class="method"><h4>&#128260; 方法四：自动匹配</h4><p>描述需求时，Hermes 会扫描所有技能的描述和触发条件，自动加载最匹配的技能。</p></div>
+    </div>
+  </div>
+  <div class="search-count" id="searchCount"></div>
+  <div class="content" id="content"></div>
+</main>
+<script>
+var CAT_MAP = __CATMAP_DATA__;
+var CAT_COLORS = {
+  'apple':'#A2AAAD','autonomous-ai-agents':'#6c5ce7','content-conversion':'#fd79a8',
+  'creative':'#e17055','creative-building':'#fab1a0','daily-life':'#00b894',
+  'data-analysis':'#0984e3','data-science':'#6c5ce7','devops':'#e17055',
+  'dogfood':'#636e72','email':'#0984e3','finance':'#00b894','gaming':'#e84393',
+  'github':'#2d3436','infrastructure':'#636e72','leisure':'#fdcb6e',
+  'mcp':'#e17055','media':'#e84393','memory-management':'#00cec9',
+  'mlops':'#0984e3','night-automation':'#2d3436','note-taking':'#fdcb6e',
+  'productivity':'#00b894','red-teaming':'#d63031','research':'#6c5ce7',
+  'research-and-learning':'#a29bfe','security-monitoring':'#d63031',
+  'smart-home':'#00cec9','social-media':'#e84393','software-development':'#0984e3',
+  'tool-development':'#6c5ce7','windows-slow-network-setup':'#A2AAAD',
+  'diagramming':'#fd79a8','domain':'#636e72','feeds':'#fdcb6e',
+  'gifs':'#e84393','inference-sh':'#0984e3','project-overview':'#00cec9'
+};
+var CAT_ICONS = {
+  'apple':'\uD83C\uDF4E','autonomous-ai-agents':'\uD83E\uDD16','content-conversion':'\uD83D\uDD04','creative':'\uD83C\uDFA8',
+  'creative-building':'\uD83C\uDFD7\uFE0F','daily-life':'\uD83C\uDFE0','data-analysis':'\uD83D\uDCCA','data-science':'\uD83D\uDD2C',
+  'devops':'\u2699\uFE0F','dogfood':'\uD83D\uDC15','email':'\uD83D\uDCE7','finance':'\uD83D\uDCB0','gaming':'\uD83C\uDFAE','github':'\uD83D\uDC19',
+  'infrastructure':'\uD83D\uDDA5\uFE0F','leisure':'\uD83C\uDFAF','mcp':'\uD83D\uDD0C','media':'\uD83C\uDFAC','memory-management':'\uD83E\uDDE0',
+  'mlops':'\uD83D\uDE80','night-automation':'\uD83C\uDF19','note-taking':'\uD83D\uDCDD','productivity':'\u26A1',
+  'red-teaming':'\uD83D\uDEE1\uFE0F','research':'\uD83D\uDCDA','research-and-learning':'\uD83C\uDF93','security-monitoring':'\uD83D\uDD12',
+  'smart-home':'\uD83C\uDFE1','social-media':'\uD83D\uDCF1','software-development':'\uD83D\uDCBB','tool-development':'\uD83D\uDD27',
+  'windows-slow-network-setup':'\uD83E\uDE9F','diagramming':'\uD83D\uDCD0','domain':'\uD83C\uDF10','feeds':'\uD83D\uDCF0',
+  'gifs':'\uD83C\uDF9E\uFE0F','inference-sh':'\u2601\uFE0F','project-overview':'\uD83D\uDCCB'
+};
+var SKILLS_DATA = __SKILLSDATA__;
+var allSkills = [];
+function init() {
+  allSkills = SKILLS_DATA;
+  var stats = document.getElementById('stats');
+  var cats = {};
+  allSkills.forEach(function(s) { cats[s.category] = (cats[s.category]||0)+1; });
+  var catCount = Object.keys(cats).length;
+  stats.textContent = '\u5171 '+allSkills.length+' \u4E2A\u6280\u80FD \u00B7 '+catCount+' \u4E2A\u5206\u7C7B';
+  var catList = document.getElementById('catList');
+  var sorted = Object.entries(cats).sort(function(a,b) { return b[1]-a[1]; });
+  var h = '<div class="cat-item active" data-cat="all"><span class="cat-name">\uD83D\uDCCB \u5168\u90E8\u6280\u80FD</span><span class="cat-count">'+allSkills.length+'</span></div>';
+  sorted.forEach(function(item) {
+    var cat = item[0], count = item[1];
+    var cn = CAT_MAP[cat] || cat;
+    var icon = CAT_ICONS[cat] || '\uD83D\uDCC1';
+    h += '<div class="cat-item" data-cat="'+cat+'"><span class="cat-name">'+icon+' '+cn+'</span><span class="cat-count">'+count+'</span></div>';
+  });
+  catList.innerHTML = h;
+  catList.querySelectorAll('.cat-item').forEach(function(el) {
+    el.addEventListener('click', function() {
+      catList.querySelectorAll('.cat-item').forEach(function(e) { e.classList.remove('active'); });
+      el.classList.add('active');
+      renderSkills(el.dataset.cat);
+      if(window.innerWidth<769) document.querySelector('.sidebar').classList.remove('open');
+    });
+  });
+  renderSkills('all');
+  document.getElementById('searchInput').addEventListener('input', function(e) {
+    var q = e.target.value.toLowerCase().trim();
+    if(!q){renderSkills(document.querySelector('.cat-item.active').dataset.cat);return;}
+    var filtered = allSkills.filter(function(s) {
+      return s.name.toLowerCase().indexOf(q)!==-1 || s.title.toLowerCase().indexOf(q)!==-1 ||
+        s.desc.toLowerCase().indexOf(q)!==-1 || (CAT_MAP[s.category]||'').toLowerCase().indexOf(q)!==-1 ||
+        s.category.indexOf(q)!==-1;
+    });
+    renderFiltered(filtered, '\u641C\u7D22 "'+e.target.value+'"');
+  });
+}
+function renderSkills(cat) {
+  var filtered = cat === 'all' ? allSkills : allSkills.filter(function(s) { return s.category === cat; });
+  var label = cat === 'all' ? '\u5168\u90E8\u6280\u80FD' : (CAT_MAP[cat]||cat);
+  renderFiltered(filtered, label);
+}
+function escHtml(t) {
+  if(!t) return '';
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function renderFiltered(skills, label) {
+  var content = document.getElementById('content');
+  document.getElementById('searchCount').textContent = label+'\uFF1A\u663E\u793A '+skills.length+' \u4E2A\u6280\u80FD';
+  var grouped = {};
+  skills.forEach(function(s) {
+    if(!grouped[s.category]) grouped[s.category] = [];
+    grouped[s.category].push(s);
+  });
+  var html = '';
+  var sortedCats = Object.entries(grouped).sort(function(a,b) { return b[1].length - a[1].length; });
+  sortedCats.forEach(function(item) {
+    var cat = item[0], list = item[1];
+    var cn = CAT_MAP[cat] || cat;
+    var icon = CAT_ICONS[cat] || '\uD83D\uDCC1';
+    var color = CAT_COLORS[cat] || '#6c5ce7';
+    html += '<div class="cat-section"><div class="cat-section-header"><span style="font-size:24px">'+icon+'</span><h2>'+cn+'</h2><span class="cat-badge" style="background:'+color+'22;color:'+color+'">'+list.length+' \u4E2A\u6280\u80FD</span></div><div class="skills-grid">';
+    list.forEach(function(s,i) {
+      var trigger = s.trigger || '\u81EA\u52A8\u5339\u914D';
+      html += '<div class="skill-card" onclick="this.classList.toggle(\'expanded\')" style="animation-delay:'+i*30+'ms">'+
+        '<div class="skill-name"><span class="icon">'+icon+'</span>'+escHtml(s.name)+'</div>'+
+        '<span class="skill-cat" style="background:'+color+'22;color:'+color+'">'+cn+'</span>'+
+        '<div class="skill-desc">'+escHtml(s.desc || '\u6682\u65E0\u63CF\u8FF0')+'</div>'+
+        '<div class="expand-hint">\uD83D\uDCA1 \u70B9\u51FB\u5C55\u5F00\u4F7F\u7528\u65B9\u6CD5</div>'+
+        '<div class="how-to-use">'+
+          '<p><strong>\uD83D\uDCCC \u89E6\u53D1\u65B9\u5F0F\uFF1A</strong>'+escHtml(trigger)+'</p>'+
+          '<p><strong>\uD83D\uDCAC \u81EA\u7136\u8BED\u8A00\uFF1A</strong>\u5BF9 Hermes \u8BF4 <code>\u52A0\u8F7D '+escHtml(s.name)+' \u6280\u80FD</code></p>'+
+          '<p><strong>\u2328\uFE0F CLI \u547D\u4EE4\uFF1A</strong><code>skill_view(\''+escHtml(s.name)+'\')</code></p>'+
+          '<p><strong>\uD83C\uDFAF \u4F7F\u7528\u573A\u666F\uFF1A</strong>'+escHtml(s.desc || '\u6839\u636E\u63CF\u8FF0\u5224\u65AD\u9002\u7528\u573A\u666F')+'</p>'+
+        '</div>'+
+      '</div>';
+    });
+    html += '</div></div>';
+  });
+  content.innerHTML = html;
+}
+init();
+</script>
+</body>
+</html>

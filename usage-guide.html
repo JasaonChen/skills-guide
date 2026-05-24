@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Agent Skills 一对一使用指南</title>
+<style>
+  @page { margin: 2cm }
+  * { margin: 0; padding: 0; box-sizing: border-box }
+  body {
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #1a1a2e; line-height: 1.8; font-size: 11pt;
+    max-width: 210mm; margin: 0 auto; padding: 2cm;
+    background: #fff;
+  }
+  h1 {
+    font-size: 24pt; color: #6c5ce7; margin-bottom: 6pt;
+    padding-bottom: 10pt; border-bottom: 3px solid #6c5ce7;
+  }
+  h2 {
+    font-size: 16pt; color: #6c5ce7; margin: 30pt 0 10pt 0;
+    padding-bottom: 4pt; border-bottom: 1px solid #dfe6e9;
+  }
+  h3 {
+    font-size: 13pt; color: #2d3436; margin: 20pt 0 8pt 0;
+    padding-left: 8pt; border-left: 3px solid #6c5ce7;
+  }
+  p { margin: 8pt 0; color: #333; }
+  .subtitle {
+    color: #636e72; font-size: 10pt; margin-bottom: 20pt;
+  }
+  hr { border: none; border-top: 1px solid #dfe6e9; margin: 20pt 0; }
+  table {
+    width: 100%; border-collapse: collapse; margin: 12pt 0;
+    font-size: 10pt;
+  }
+  th {
+    background: #6c5ce7; color: #fff; padding: 6pt 10pt;
+    text-align: left; font-weight: 600;
+  }
+  td {
+    padding: 5pt 10pt; border-bottom: 1px solid #dfe6e9;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f8f9fa; }
+  code {
+    background: #f0edff; color: #6c5ce7; padding: 1pt 6pt;
+    border-radius: 3pt; font-size: 10pt; font-family: "Consolas","Courier New",monospace;
+  }
+  pre {
+    background: #2d3436; color: #dfe6e9; padding: 12pt 16pt;
+    border-radius: 6pt; overflow-x: auto; font-size: 10pt;
+    font-family: "Consolas","Courier New",monospace; margin: 10pt 0;
+  }
+  pre code { background: transparent; color: #dfe6e9; padding: 0; }
+  blockquote {
+    background: #f0edff; border-left: 4px solid #6c5ce7;
+    padding: 10pt 16pt; margin: 12pt 0; border-radius: 0 6pt 6pt 0;
+    color: #555;
+  }
+  ul, ol { margin: 8pt 0; padding-left: 24pt; }
+  li { margin: 4pt 0; }
+  strong { color: #2d3436; }
+  .badge {
+    display: inline-block; background: #6c5ce7; color: #fff;
+    padding: 2pt 8pt; border-radius: 10pt; font-size: 9pt;
+    margin-right: 4pt;
+  }
+  .badge-subtle {
+    display: inline-block; background: #f0edff; color: #6c5ce7;
+    padding: 2pt 8pt; border-radius: 10pt; font-size: 9pt;
+    margin-right: 4pt;
+  }
+  .tip-box {
+    background: #e8f8f5; border-left: 4px solid #00b894;
+    padding: 10pt 16pt; margin: 12pt 0; border-radius: 0 6pt 6pt 0;
+  }
+  .tip-box strong { color: #00b894; }
+  .footer {
+    text-align: center; color: #b2bec3; font-size: 9pt;
+    margin-top: 40pt; padding-top: 10pt; border-top: 1px solid #dfe6e9;
+  }
+  @media print {
+    body { padding: 0; }
+    pre { page-break-inside: avoid; }
+    table { page-break-inside: avoid; }
+    h2, h3 { page-break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Hermes Agent Skills 一对一使用指南</h1>
+<div class="subtitle">完全掌握 Hermes Agent 的 265 个技能 · 让 AI 协作如虎添翼</div>
+
+<h2>一、什么是 Skills？</h2>
+<p>Skills 是 Hermes Agent 的<strong>程序性记忆</strong>——经过验证的、可重复使用的解决方案，涵盖从日常任务到专业开发的各个领域。每个技能包含：</p>
+<ul>
+  <li><strong>名称</strong> — 唯一标识符（如 <code>github-code-review</code>）</li>
+  <li><strong>描述</strong> — 做什么、何时用</li>
+  <li><strong>触发条件</strong> — 自动匹配的场景（如任务涉及 git diff）</li>
+  <li><strong>分类</strong> — 所属领域（共 32 个分类）</li>
+</ul>
+<p>目前共有 <span class="badge">265 个技能</span>分布在 <span class="badge">32 个类别</span>中。</p>
+
+<h2>二、核心工作流</h2>
+
+<h3>2.1 自动匹配（最常用）</h3>
+<p>当你提出需求时，Hermes Agent 会自动：</p>
+<pre><code>用户: "帮我 review 这段代码变化"
+  ↓
+Agent 检索 → 匹配技能: github-code-review
+  ↓
+加载技能 → 按照预设步骤执行
+  ↓
+输出结果</code></pre>
+<p>你<strong>不需要手动操作</strong>——系统会自动判断哪个技能适用。</p>
+
+<h3>2.2 手动查看技能</h3>
+<p>想知道 Hermes Agent 会怎么做？随时可以查看：</p>
+<pre><code>你可以这样说：
+  → "加载 github 相关技能看看"
+  → "显示代码审查技能"
+  → "打开测试相关的技能"</code></pre>
+
+<h3>2.3 触发特定技能</h3>
+<p>如果系统没有自动匹配，你可以直接指定：</p>
+<pre><code>示例：
+  → "用 systematic-debugging 模式处理这个 bug"
+  → "按 test-driven-development 流程来"
+  → "使用 plan 模式先做个规划"</code></pre>
+
+<h2>三、技能分类速查</h2>
+
+<div class="tip-box">
+  <strong>提示：</strong> 访问 <code>index.html</code>（交互式网站）可以浏览、搜索和筛选全部 265 个技能。
+  <code>skills-guide-pdf.html</code>（可打印版）适合离线阅读和打印。
+</div>
+
+<h3>软件开发</h3>
+<table>
+  <tr><th>技能</th><th>用途</th></tr>
+  <tr><td><code>plan</code></td><td>项目规划与需求分析</td></tr>
+  <tr><td><code>systematic-debugging</code></td><td>系统化调试流程</td></tr>
+  <tr><td><code>test-driven-development</code></td><td>TDD 工作流</td></tr>
+  <tr><td><code>writing-plans</code></td><td>编写实施方案</td></tr>
+  <tr><td><code>codebase-inspection</code></td><td>代码库分析</td></tr>
+  <tr><td><code>requesting-code-review</code></td><td>代码审查前检查</td></tr>
+</table>
+
+<h3>GitHub 工作流</h3>
+<table>
+  <tr><th>技能</th><th>用途</th></tr>
+  <tr><td><code>github-auth</code></td><td>GitHub 认证</td></tr>
+  <tr><td><code>github-pr-workflow</code></td><td>PR 全生命周期</td></tr>
+  <tr><td><code>github-issues</code></td><td>Issue 管理</td></tr>
+  <tr><td><code>github-code-review</code></td><td>代码审查</td></tr>
+  <tr><td><code>github-repo-management</code></td><td>仓库管理</td></tr>
+</table>
+
+<h3>数据分析 &amp; 科学</h3>
+<table>
+  <tr><th>技能</th><th>用途</th></tr>
+  <tr><td><code>arxiv</code></td><td>学术论文检索</td></tr>
+  <tr><td><code>llm-wiki</code></td><td>LLM 知识库维护</td></tr>
+  <tr><td>数据分析相关</td><td>数据处理、可视化</td></tr>
+</table>
+
+<h3>创意设计</h3>
+<table>
+  <tr><th>技能</th><th>用途</th></tr>
+  <tr><td><code>architecture-diagram</code></td><td>SVG 系统架构图</td></tr>
+  <tr><td><code>excalidraw</code></td><td>手绘风格图表</td></tr>
+  <tr><td><code>baoyu-infographic</code></td><td>专业信息图</td></tr>
+  <tr><td><code>popular-web-designs</code></td><td>设计系统参考</td></tr>
+  <tr><td><code>songwriting-and-ai-music</code></td><td>AI 音乐生成</td></tr>
+</table>
+
+<h3>生产力 &amp; 文档</h3>
+<table>
+  <tr><th>技能</th><th>用途</th></tr>
+  <tr><td><code>notion</code></td><td>Notion API 操作</td></tr>
+  <tr><td><code>linear</code></td><td>Linear 项目管理</td></tr>
+  <tr><td><code>powerpoint</code></td><td>PPT 文件处理</td></tr>
+  <tr><td><code>ocr-and-documents</code></td><td>OCR 文档提取</td></tr>
+  <tr><td><code>youtube-content</code></td><td>YouTube 字幕处理</td></tr>
+</table>
+
+<h2>四、自动匹配规则</h2>
+<p>系统根据你的任务内容自动选择技能。核心匹配逻辑：</p>
+<ol>
+  <li><strong>关键词匹配</strong> — 任务描述中的关键词触发对应技能</li>
+  <li><strong>文件类型识别</strong> — .py 触发代码技能，.md 触发文档技能</li>
+  <li><strong>命令识别</strong> — git 操作触发 GitHub 技能，npm/test 触发开发技能</li>
+  <li><strong>意图分析</strong> — "bug" 触发调试技能，"plan" 触发规划技能</li>
+</ol>
+
+<h2>五、常用技巧</h2>
+
+<h3>5.1 组合使用多个技能</h3>
+<p>复杂任务可以串联多个技能：</p>
+<ol>
+  <li>先用 <code>plan</code> 做规划</li>
+  <li>再用 <code>writing-plans</code> 写实施方案</li>
+  <li>然后用 <code>test-driven-development</code> 开发</li>
+  <li>最后用 <code>github-code-review</code> 审查代码</li>
+</ol>
+
+<h3>5.2 技能 + 记忆联动</h3>
+<p>技能是<strong>怎么做</strong>（步骤、命令、工作流），记忆是<strong>关于谁</strong>（偏好、环境、设置）。两者互补。</p>
+
+<h3>5.3 快速上手新领域</h3>
+<p>想学习某个领域的最佳实践？加载对应技能即可：</p>
+<pre><code>"加载 data-science 分类的技能"
+"显示 security-monitoring 相关技能"</code></pre>
+
+<h2>六、分类全景</h2>
+<table>
+  <tr><th>类别</th><th>技能数</th><th>说明</th></tr>
+  <tr><td>生产力</td><td>36</td><td>文档、笔记、日程</td></tr>
+  <tr><td>GitHub</td><td>25</td><td>代码托管协作</td></tr>
+  <tr><td>软件开发</td><td>22</td><td>编程工作流</td></tr>
+  <tr><td>创意设计</td><td>18</td><td>图表、视觉</td></tr>
+  <tr><td>数据分析</td><td>16</td><td>数据处理</td></tr>
+  <tr><td>数据科学</td><td>15</td><td>机器学习</td></tr>
+  <tr><td>DevOps</td><td>14</td><td>运维部署</td></tr>
+  <tr><td>MCP 协议</td><td>12</td><td>模型上下文协议</td></tr>
+  <tr><td>媒体内容</td><td>11</td><td>视频、音频、GIF</td></tr>
+  <tr><td>学术研究</td><td>10</td><td>论文、知识库</td></tr>
+  <tr><td>基础设施</td><td>9</td><td>服务器、网络</td></tr>
+  <tr><td>日常生活</td><td>8</td><td>实用工具</td></tr>
+  <tr><td>测试狗粮</td><td>7</td><td>QA 测试</td></tr>
+  <tr><td>笔记</td><td>6</td><td>知识管理</td></tr>
+  <tr><td>Git</td><td>6</td><td>版本控制</td></tr>
+  <tr><td>记忆管理</td><td>5</td><td>长期记忆</td></tr>
+  <tr><td>智能家居</td><td>5</td><td>家庭自动化</td></tr>
+  <tr><td>金融理财</td><td>5</td><td>财务工具</td></tr>
+  <tr><td>邮件</td><td>5</td><td>邮件处理</td></tr>
+  <tr><td>AI 自主代理</td><td>4</td><td>AI 代理编排</td></tr>
+  <tr><td>安全监控</td><td>4</td><td>安全扫描</td></tr>
+  <tr><td>内容转换</td><td>4</td><td>格式转换</td></tr>
+  <tr><td>社交媒体</td><td>4</td><td>社交平台</td></tr>
+  <tr><td>Windows 环境配置</td><td>3</td><td>Windows 优化</td></tr>
+  <tr><td>游戏</td><td>3</td><td>游戏相关</td></tr>
+  <tr><td>MLOps</td><td>3</td><td>ML 运维</td></tr>
+  <tr><td>夜间自动化</td><td>3</td><td>定时任务</td></tr>
+  <tr><td>休闲生活</td><td>2</td><td>周边查询</td></tr>
+  <tr><td>创意构建</td><td>2</td><td>创意工具</td></tr>
+  <tr><td>红队测试</td><td>2</td><td>安全测试</td></tr>
+  <tr><td>工具开发</td><td>2</td><td>工具编写</td></tr>
+  <tr><td>Apple 生态</td><td>1</td><td>Apple 设备</td></tr>
+  <tr><td style="font-weight:600;background:#f0edff">总计</td><td style="font-weight:600;background:#f0edff">265</td><td style="font-weight:600;background:#f0edff">32 分类</td></tr>
+</table>
+
+<h2>七、常见问题</h2>
+
+<p><strong>Q: 技能会过期吗？</strong></p>
+<p>A: 发现过时或错误的技能时，会自动更新。你也可以要求"更新这个技能"。</p>
+
+<p><strong>Q: 可以自己创建技能吗？</strong></p>
+<p>A: 可以！完成复杂任务后，系统会提示"是否保存为技能"。你也可以直接说"把这个流程存成技能"。</p>
+
+<p><strong>Q: 技能冲突怎么办？</strong></p>
+<p>A: 系统按优先级选择最匹配的技能。你可以手动覆盖："不用那个，用这个技能"。</p>
+
+<p><strong>Q: 技能和插件的区别？</strong></p>
+<p>A: 技能是本地的、经过验证的工作流；插件可能来自外部。技能更可靠、更定制化。</p>
+
+<hr>
+
+<blockquote>
+  <strong>三个文件各有用途：</strong><br>
+  • <code>index.html</code> ← 交互式浏览（搜索、筛选、探索）<br>
+  • <code>skills-guide-pdf.html</code> ← 可打印版（A4 优化、分页）<br>
+  • <code>usage-guide.html</code> ← 使用指南（新手入门、概念解释）
+</blockquote>
+
+<div class="footer">
+  Hermes Agent Skills 使用指南 · 版本 1.0 · 2026-05-24 · 265 技能 · 32 分类
+</div>
+
+</body>
+</html>
